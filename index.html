@@ -63,6 +63,11 @@ button {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Only No button shrinks on click */
+#noBtn:active {
+  transform: scale(0.85);
+}
+
 #yesBtn {
   left: calc(50% - 100px);
   top: 55%;
@@ -138,13 +143,13 @@ function moveButton() {
   noBtn.style.left = randomX + "px";
   noBtn.style.top = randomY + "px";
 
-  // Grow Yes button
+  // Grow Yes button if you like (optional)
   yesScale += 0.08;
   yesBtn.style.transform = `scale(${yesScale})`;
 
-  // Shrink No button (minimum 0.2 scale)
-  noScale = Math.max(0.2, noScale - 0.1);
-  noBtn.style.transform = `scale(${noScale})`;
+  // Remove JS shrink for No button — CSS handles click shrink
+  // noScale = Math.max(0.2, noScale - 0.1);
+  // noBtn.style.transform = `scale(${noScale})`;
 }
 
 noBtn.addEventListener("mouseenter", moveButton);
@@ -221,4 +226,3 @@ window.addEventListener("resize", () => {
 </script>
 </body>
 </html>
-
