@@ -63,11 +63,6 @@ button {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Only No button shrinks on click */
-#noBtn:active {
-  transform: scale(0.85);
-}
-
 #yesBtn {
   left: calc(50% - 100px);
   top: 55%;
@@ -130,7 +125,8 @@ const questionArea = document.getElementById("questionArea");
 const message = document.getElementById("message");
 
 let yesScale = 1;
-let noScale = 1;
+let noScale = 1; // initial scale for No button
+const minNoScale = 0.3; // how small the No button can shrink
 
 function moveButton() {
   const padding = 50;
@@ -143,18 +139,19 @@ function moveButton() {
   noBtn.style.left = randomX + "px";
   noBtn.style.top = randomY + "px";
 
-  // Grow Yes button if you like (optional)
+  // Grow Yes button slightly
   yesScale += 0.08;
   yesBtn.style.transform = `scale(${yesScale})`;
 
-  // Remove JS shrink for No button — CSS handles click shrink
-  // noScale = Math.max(0.2, noScale - 0.1);
-  // noBtn.style.transform = `scale(${noScale})`;
+  // Shrink No button incrementally
+  noScale = Math.max(minNoScale, noScale - 0.06);
+  noBtn.style.transform = `scale(${noScale})`;
 }
 
+// Trigger on hover and touch
 noBtn.addEventListener("mouseenter", moveButton);
 noBtn.addEventListener("touchstart", (e) => {
-  e.preventDefault(); 
+  e.preventDefault();
   moveButton();
 });
 
