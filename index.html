@@ -2,13 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<!-- Added viewport-fit=cover for iPhone notches -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>A Note For You</title>
 <style>
 body {
   margin: 0;
-  /* Use -webkit-fill-available for consistent mobile height */
   height: 100vh;
   height: -webkit-fill-available;
   overflow: hidden;
@@ -22,7 +20,6 @@ body {
   background-size: 100% 100%, 100% 30px;
   font-family: "Comic Sans MS", "Chalkboard SE", "Marker Felt", cursive;
   color: #2c3e50;
-  /* Prevents accidental elastic scrolling on iOS */
   position: fixed;
   width: 100%;
 }
@@ -36,8 +33,7 @@ canvas {
 }
 
 .header-container {
-  /* Adjusted for iPhone 12 notch and vertical center */
-  margin-top: 15vh; 
+  margin-top: 30vh; 
   text-align: center;
   z-index: 2;
   padding: 0 20px;
@@ -45,19 +41,18 @@ canvas {
 }
 
 h1 {
-  font-size: 1.6rem; /* Slightly smaller for mobile width */
+  font-size: 1.6rem;
   font-weight: normal;
   line-height: 1.4;
   display: inline;
   margin: 0;
   border-bottom: 3px solid #ff0000;
-  word-wrap: break-word;
 }
 
 button {
   padding: 12px 24px;
   font-size: 20px;
-  background: #fdfdfd; /* Solid background helps on mobile */
+  background: #fdfdfd;
   cursor: pointer;
   position: fixed;
   transition: transform 0.2s ease, left 0.2s ease, top 0.2s ease;
@@ -65,7 +60,6 @@ button {
   border-radius: 50% 45% 52% 48%; 
   outline: none;
   z-index: 5;
-  /* Prevent blue highlight on tap */
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -94,7 +88,6 @@ button {
   z-index: 20;
   color: #ff0000;
   width: 85%;
-  line-height: 1.2;
 }
 
 .heart {
@@ -106,7 +99,6 @@ button {
 
 @keyframes floatUp {
   0% { transform: translateY(105vh) rotate(0deg); opacity: 1; }
-  80% { opacity: 0.8; }
   100% { transform: translateY(-10vh) rotate(20deg); opacity: 0; }
 }
 </style>
@@ -133,28 +125,31 @@ const questionArea = document.getElementById("questionArea");
 const message = document.getElementById("message");
 
 let yesScale = 1;
+let noScale = 1;
 
 function moveButton() {
-  // Mobile specific safe area padding
-  const padding = 40;
+  const padding = 50;
   const maxX = window.innerWidth - noBtn.offsetWidth - padding;
   const maxY = window.innerHeight - noBtn.offsetHeight - padding;
 
-  // Ensure button stays within visible viewport
   const randomX = Math.max(padding, Math.min(Math.random() * maxX, maxX));
   const randomY = Math.max(padding, Math.min(Math.random() * maxY, maxY));
 
   noBtn.style.left = randomX + "px";
   noBtn.style.top = randomY + "px";
 
+  // Grow Yes button
   yesScale += 0.08;
   yesBtn.style.transform = `scale(${yesScale})`;
+
+  // Shrink No button (minimum 0.2 scale)
+  noScale = Math.max(0.2, noScale - 0.1);
+  noBtn.style.transform = `scale(${noScale})`;
 }
 
-// Hover for desktop, touchstart for iPhone
 noBtn.addEventListener("mouseenter", moveButton);
 noBtn.addEventListener("touchstart", (e) => {
-  e.preventDefault(); // Prevents clicking the "No" button
+  e.preventDefault(); 
   moveButton();
 });
 
@@ -178,6 +173,7 @@ function createHeart() {
 }
 setInterval(createHeart, 600);
 
+// Fireworks Logic
 const canvas = document.getElementById("fireworks");
 const ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
@@ -225,3 +221,4 @@ window.addEventListener("resize", () => {
 </script>
 </body>
 </html>
+
