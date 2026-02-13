@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- Added viewport-fit=cover for iPhone notches -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>A Note For You</title>
+<style>
+body {
+  margin: 0;
+  /* Use -webkit-fill-available for consistent mobile height */
+  height: 100vh;
+  height: -webkit-fill-available;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #fdfdfd;
+  background-image: 
+    linear-gradient(90deg, transparent 79px, #abced4 79px, #abced4 81px, transparent 81px),
+    linear-gradient(#eee .1em, transparent .1em);
+  background-size: 100% 100%, 100% 30px;
+  font-family: "Comic Sans MS", "Chalkboard SE", "Marker Felt", cursive;
+  color: #2c3e50;
+  /* Prevents accidental elastic scrolling on iOS */
+  position: fixed;
+  width: 100%;
+}
+
+canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.header-container {
+  /* Adjusted for iPhone 12 notch and vertical center */
+  margin-top: 15vh; 
+  text-align: center;
+  z-index: 2;
+  padding: 0 20px;
+  width: 80%;
+}
+
+h1 {
+  font-size: 1.6rem; /* Slightly smaller for mobile width */
+  font-weight: normal;
+  line-height: 1.4;
+  display: inline;
+  margin: 0;
+  border-bottom: 3px solid #ff0000;
+  word-wrap: break-word;
+}
+
+button {
+  padding: 12px 24px;
+  font-size: 20px;
+  background: #fdfdfd; /* Solid background helps on mobile */
+  cursor: pointer;
+  position: fixed;
+  transition: transform 0.2s ease, left 0.2s ease, top 0.2s ease;
+  font-family: inherit;
+  border-radius: 50% 45% 52% 48%; 
+  outline: none;
+  z-index: 5;
+  /* Prevent blue highlight on tap */
+  -webkit-tap-highlight-color: transparent;
+}
+
+#yesBtn {
+  left: calc(50% - 100px);
+  top: 55%;
+  border: 3px solid #ff0000;
+  color: #ff0000;
+}
+
+#noBtn {
+  left: calc(50% + 10px);
+  top: 55%;
+  border: 3px solid #000000;
+  color: #000000;
+}
+
+.hidden-message {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 28px;
+  text-align: center;
+  z-index: 20;
+  color: #ff0000;
+  width: 85%;
+  line-height: 1.2;
+}
+
+.heart {
+  position: absolute;
+  color: #ff0000;
+  pointer-events: none;
+  animation: floatUp linear forwards;
+}
+
+@keyframes floatUp {
+  0% { transform: translateY(105vh) rotate(0deg); opacity: 1; }
+  80% { opacity: 0.8; }
+  100% { transform: translateY(-10vh) rotate(20deg); opacity: 0; }
+}
+</style>
+</head>
+<body>
+
+<canvas id="fireworks"></canvas>
+
+<div class="header-container" id="questionArea">
+  <h1 id="question">Bubba, will you be my Valentine?</h1>
+</div>
+
+<button id="yesBtn">Yes</button>
+<button id="noBtn">No</button>
+
+<div class="hidden-message" id="message">
+  Happy Valentines day patootie!!!! 💌
+</div>
+
+<script>
+const noBtn = document.getElementById("noBtn");
+const yesBtn = document.getElementById("yesBtn");
+const questionArea = document.getElementById("questionArea");
+const message = document.getElementById("message");
+
+let yesScale = 1;
+
+function moveButton() {
+  // Mobile specific safe area padding
+  const padding = 40;
+  const maxX = window.innerWidth - noBtn.offsetWidth - padding;
+  const maxY = window.innerHeight - noBtn.offsetHeight - padding;
+
+  // Ensure button stays within visible viewport
+  const randomX = Math.max(padding, Math.min(Math.random() * maxX, maxX));
+  const randomY = Math.max(padding, Math.min(Math.random() * maxY, maxY));
+
+  noBtn.style.left = randomX + "px";
+  noBtn.style.top = randomY + "px";
+
+  yesScale += 0.08;
+  yesBtn.style.transform = `scale(${yesScale})`;
+}
+
+// Hover for desktop, touchstart for iPhone
+noBtn.addEventListener("mouseenter", moveButton);
+noBtn.addEventListener("touchstart", (e) => {
+  e.preventDefault(); // Prevents clicking the "No" button
+  moveButton();
+});
+
+yesBtn.addEventListener("click", () => {
+  questionArea.style.display = "none";
+  yesBtn.style.display = "none";
+  noBtn.style.display = "none";
+  message.style.display = "block";
+  startFireworks();
+});
+
+function createHeart() {
+  const heart = document.createElement("div");
+  heart.className = "heart";
+  heart.innerHTML = "♡"; 
+  heart.style.left = Math.random() * 100 + "vw";
+  heart.style.fontSize = (Math.random() * 15 + 20) + "px";
+  heart.style.animationDuration = (Math.random() * 2 + 3) + "s";
+  document.body.appendChild(heart);
+  setTimeout(() => heart.remove(), 5000);
+}
+setInterval(createHeart, 600);
+
+const canvas = document.getElementById("fireworks");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+let particles = [];
+
+function createFirework(x, y) {
+  for (let i = 0; i < 30; i++) {
+    particles.push({
+      x, y,
+      angle: Math.random() * 2 * Math.PI,
+      speed: Math.random() * 3 + 1,
+      radius: 1.2,
+      alpha: 1
+    });
+  }
+}
+
+function startFireworks() {
+  setInterval(() => {
+    createFirework(Math.random() * canvas.width, Math.random() * (canvas.height * 0.7));
+  }, 800);
+}
+
+function animate() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach((p, index) => {
+    p.x += Math.cos(p.angle) * p.speed;
+    p.y += Math.sin(p.angle) * p.speed;
+    p.alpha -= 0.015;
+    ctx.fillStyle = `rgba(255, 0, 0, ${p.alpha})`; 
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.radius, 0, Math.PI*2);
+    ctx.fill();
+    if (p.alpha <= 0) particles.splice(index, 1);
+  });
+  requestAnimationFrame(animate);
+}
+animate();
+
+window.addEventListener("resize", () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+</script>
+</body>
+</html>
