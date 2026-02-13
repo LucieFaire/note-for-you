@@ -125,10 +125,13 @@ const questionArea = document.getElementById("questionArea");
 const message = document.getElementById("message");
 
 let yesScale = 1;
-let noScale = 1; // initial scale for No button
-const minNoScale = 0.3; // how small the No button can shrink
+let noScale = 1; // current scale of No button
+const minNoScale = 0.3; // smallest size No button can shrink to
 
-function moveButton() {
+// Set initial scale
+noBtn.style.transform = `scale(${noScale})`;
+
+function moveNoButtonRandomly() {
   const padding = 50;
   const maxX = window.innerWidth - noBtn.offsetWidth - padding;
   const maxY = window.innerHeight - noBtn.offsetHeight - padding;
@@ -138,21 +141,26 @@ function moveButton() {
 
   noBtn.style.left = randomX + "px";
   noBtn.style.top = randomY + "px";
-
-  // Grow Yes button slightly
-  yesScale += 0.08;
-  yesBtn.style.transform = `scale(${yesScale})`;
-
-  // Shrink No button incrementally
-  noScale = Math.max(minNoScale, noScale - 0.06);
-  noBtn.style.transform = `scale(${noScale})`;
 }
 
-// Trigger on hover and touch
-noBtn.addEventListener("mouseenter", moveButton);
+function shrinkNoButton() {
+  // Shrink No button incrementally, stay small
+  noScale = Math.max(minNoScale, noScale - 0.1);
+  noBtn.style.transform = `scale(${noScale})`;
+
+  // Move No button randomly
+  moveNoButtonRandomly();
+
+  // Optional: grow Yes button slightly
+  yesScale += 0.08;
+  yesBtn.style.transform = `scale(${yesScale})`;
+}
+
+// Use pointerenter for both mouse hover and touch devices
+noBtn.addEventListener("pointerenter", shrinkNoButton);
 noBtn.addEventListener("touchstart", (e) => {
   e.preventDefault();
-  moveButton();
+  shrinkNoButton();
 });
 
 yesBtn.addEventListener("click", () => {
