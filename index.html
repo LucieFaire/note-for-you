@@ -145,7 +145,7 @@ function moveNoButtonRandomly() {
 
 function shrinkNoButton() {
   // Shrink No button incrementally, stay small
-  noScale = Math.max(minNoScale, noScale - 0.1);
+  noScale = Math.max(minNoScale, noScale - 0.06);
   noBtn.style.transform = `scale(${noScale})`;
 
   // Move No button randomly
