@@ -127,6 +127,7 @@ const message = document.getElementById("message");
 let yesScale = 1;
 let noScale = 1; // current scale of No button
 const minNoScale = 0.3; // smallest size No button can shrink to
+const shrinkStep = 0.02; // how much it shrinks per hover (smaller = slower)
 
 // Set initial scale
 noBtn.style.transform = `scale(${noScale})`;
@@ -144,8 +145,8 @@ function moveNoButtonRandomly() {
 }
 
 function shrinkNoButton() {
-  // Shrink No button incrementally, stay small
-  noScale = Math.max(minNoScale, noScale - 0.06);
+  // Shrink No button gradually, stay small
+  noScale = Math.max(minNoScale, noScale - shrinkStep);
   noBtn.style.transform = `scale(${noScale})`;
 
   // Move No button randomly
